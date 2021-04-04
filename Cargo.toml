@@ -1,0 +1,13 @@
+[package]
+name = "simple-ssg"
+version = "0.1.0"
+authors = ["Laura Powles <laura@laurapowles.com>"]
+edition = "2018"
+
+[profile.release]
+opt-level = 3
+lto = true
+debug = false
+codegen-units = 1
+
+[dependencies]
