@@ -1,7 +1,9 @@
 use std::env;
 use std::fs;
+use std::io::Write;
 use std::path;
 use std::process::exit;
+use std::process::Command;
 
 fn new(path: path::PathBuf) {
     // Try to move into the given directory.
@@ -35,6 +37,24 @@ fn new(path: path::PathBuf) {
     fs::create_dir(format!("{}/pages", path_string)).unwrap();
     fs::create_dir(format!("{}/css", path_string)).unwrap();
     fs::create_dir(format!("{}/scripts", path_string)).unwrap();
+
+    // Create a template .gitignore.
+    static GITIGNORE_CONTENT: &str = "target";
+
+    // open the .gitignore file in write-only mode.
+    let mut file = match fs::File::create(format!("{}/.gitignore", path_string)) {
+        Err(why) => panic!("couldn't create file: {}", why),
+        Ok(file) => file,
+    };
+
+    // then write the `GITIGNORE_CONTENT` string to it.
+    file.write_all(GITIGNORE_CONTENT.as_bytes()).unwrap();
+
+    // Finally, initialise git
+    Command::new("git")
+        .arg("init")
+        .output()
+        .expect("Failed to initialise git repository.");
 }
 
 fn process_args() -> (Vec<String>, Vec<String>) {
