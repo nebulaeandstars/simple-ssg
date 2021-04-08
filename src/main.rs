@@ -1,61 +1,7 @@
+mod init;
+
 use std::env;
-use std::fs;
-use std::io::Write;
 use std::path;
-use std::process::exit;
-use std::process::Command;
-
-fn new(path: path::PathBuf) {
-    // Try to move into the given directory.
-    match env::set_current_dir(&path) {
-        Ok(_) => (),
-        // If it doesn't exist, create it.
-        Err(_) => {
-            let s = path.to_str().unwrap();
-
-            fs::create_dir_all(s).unwrap();
-            env::set_current_dir(s).unwrap();
-            let path = env::current_dir().unwrap();
-            println!("creating new project at {}/", path.to_str().unwrap());
-        }
-    };
-
-    let path = env::current_dir().expect("Could not read working directory!");
-    let path_string = path.to_str().unwrap();
-
-    let paths = fs::read_dir(path_string).unwrap();
-
-    // If the directory isn't empty, exit with an error.
-    for _ in paths {
-        eprintln!("{} is not an empty directory!", path_string);
-        exit(1);
-    }
-
-    // If in an empty directory, create all template directories.
-    fs::create_dir(format!("{}/snippets", path_string)).unwrap();
-    fs::create_dir(format!("{}/layouts", path_string)).unwrap();
-    fs::create_dir(format!("{}/pages", path_string)).unwrap();
-    fs::create_dir(format!("{}/css", path_string)).unwrap();
-    fs::create_dir(format!("{}/scripts", path_string)).unwrap();
-
-    // Create a template .gitignore.
-    static GITIGNORE_CONTENT: &str = "target";
-
-    // open the .gitignore file in write-only mode.
-    let mut file = match fs::File::create(format!("{}/.gitignore", path_string)) {
-        Err(why) => panic!("couldn't create file: {}", why),
-        Ok(file) => file,
-    };
-
-    // then write the `GITIGNORE_CONTENT` string to it.
-    file.write_all(GITIGNORE_CONTENT.as_bytes()).unwrap();
-
-    // Finally, initialise git
-    Command::new("git")
-        .arg("init")
-        .output()
-        .expect("Failed to initialise git repository.");
-}
 
 fn process_args() -> (Vec<String>, Vec<String>) {
     let mut args: Vec<String> = env::args().collect();
@@ -89,10 +35,10 @@ fn main() {
     if !commands.is_empty() {
         if commands[0] == "init" {
             let path = env::current_dir().expect("Could not read working directory!");
-            new(path);
+            init::new(path);
         } else if commands[0] == "new" {
             let path = path::PathBuf::from(commands.get(1).expect("No directory given!"));
-            new(path)
+            init::new(path)
         }
     }
 }
