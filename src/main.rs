@@ -1,10 +1,13 @@
-use std::env;
+mod init;
 
-fn process_args() -> (String, Vec<String>, Vec<String>) {
+use std::env;
+use std::path;
+
+fn process_args() -> (Vec<String>, Vec<String>) {
     let mut args: Vec<String> = env::args().collect();
     let mut commands: Vec<String> = Vec::new();
 
-    let directory: String = args[0].clone();
+    // throw away how this binary was called
     args.remove(0);
 
     let mut i: usize = 0;
@@ -23,13 +26,19 @@ fn process_args() -> (String, Vec<String>, Vec<String>) {
         }
     }
 
-    (directory, commands, args)
+    (commands, args)
 }
 
 fn main() {
-    let (directory, commands, flags) = process_args();
+    let (commands, flags) = process_args();
 
-    println!("{:?}", directory);
-    println!("{:?}", commands);
-    println!("{:?}", flags);
+    if !commands.is_empty() {
+        if commands[0] == "init" {
+            let path = env::current_dir().expect("Could not read working directory!");
+            init::new(path);
+        } else if commands[0] == "new" {
+            let path = path::PathBuf::from(commands.get(1).expect("No directory given!"));
+            init::new(path)
+        }
+    }
 }
