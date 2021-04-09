@@ -1,0 +1,50 @@
+h1 {
+    text-align: center;
+    vertical-align: top;
+
+    color: #610061;
+    font-size: 40px;
+    font-weight: lighter;
+}
+
+body {
+    border-width: 1px;
+    border-style: solid;
+    border-color: #2d2d2d;
+    border-radius: 20px;
+
+    width: 90%;
+    max-width: 800px;
+
+    margin-top: 10px;
+    margin-bottom: 10px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+html {
+    color: #2d2d2d;
+    background-color: #ffffd8;
+
+    font-family: Open Sans, sans-serif;
+    font-size: 20px;
+}
+
+.header {
+    background-color: #ffd8ff;
+    text-align: center;
+
+    padding: 10px;
+
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+}
+
+.page-title {
+    text-align: center;
+    vertical-align: top;
+
+    color: #610061;
+    font-size: 40px;
+    font-weight: lighter;
+}
