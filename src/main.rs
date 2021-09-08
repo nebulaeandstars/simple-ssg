@@ -9,6 +9,7 @@ mod init;
 mod utils;
 
 fn main() -> Result<(), std::io::Error> {
+    // parse command line arguments using clap
     let yaml = load_yaml!("cli.yml");
     let matches = App::from_yaml(yaml)
         .set_term_width(0)
@@ -25,6 +26,17 @@ fn main() -> Result<(), std::io::Error> {
             exit(std::io::ErrorKind::Other as i32);
         } else {
             println!("Created new project at {}", get_path())
+        }
+    }
+
+    if let Some(matches) = matches.subcommand_matches("new") {
+        if let Some(path) = matches.value_of("PATH") {
+            if let Err(error) = init::new(path) {
+                println!("{}", error);
+                exit(std::io::ErrorKind::Other as i32);
+            } else {
+                println!("Created new project at {}", get_path())
+            }
         }
     }
 
