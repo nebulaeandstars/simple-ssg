@@ -24,8 +24,8 @@ pub fn create_directories(directories: &[&str]) -> Result<(), Error> {
 
     if dir_is_empty(path)? {
         return Err(Error::new(
-            ErrorKind::InvalidInput,
-            format!("{} is not empty!", path),
+            ErrorKind::Other,
+            format!("Directory is not empty!"),
         ));
     }
 

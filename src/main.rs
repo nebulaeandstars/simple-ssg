@@ -8,7 +8,20 @@ mod defaults;
 mod init;
 mod utils;
 
-fn main() -> Result<(), std::io::Error> {
+/// Similar to unwrap(), but excecutes a controlled crash with a clean output.
+/// Used for notifying the user of a bad input, etc.
+fn clean_unwrap<T>(result: Result<T, std::io::Error>) -> T {
+    match result {
+        Ok(value) => value,
+        Err(error) => {
+            println!("ERROR: {}", error);
+            exit(std::io::ErrorKind::Other as i32)
+        }
+    }
+}
+
+
+fn main() {
     // parse command line arguments using clap
     let yaml = load_yaml!("cli.yml");
     let matches = App::from_yaml(yaml)
@@ -21,24 +34,14 @@ fn main() -> Result<(), std::io::Error> {
         .get_matches();
 
     if let Some(_) = matches.subcommand_matches("init") {
-        if let Err(error) = init::init() {
-            println!("{}", error);
-            exit(std::io::ErrorKind::Other as i32);
-        } else {
-            println!("Created new project at {}", get_path())
-        }
+        clean_unwrap::<()>(init::init());
+        println!("Created new project at {}", get_path())
     }
 
     if let Some(matches) = matches.subcommand_matches("new") {
         if let Some(path) = matches.value_of("PATH") {
-            if let Err(error) = init::new(path) {
-                println!("{}", error);
-                exit(std::io::ErrorKind::Other as i32);
-            } else {
-                println!("Created new project at {}", get_path())
-            }
+            clean_unwrap::<()>(init::new(path));
+            println!("Created new project at {}", get_path())
         }
     }
-
-    Ok(())
 }
